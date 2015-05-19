@@ -20,13 +20,14 @@ final class CRegistry: NSObject
 {
     typealias CommandLookup = Dictionary<String, CCommand>
     typealias CommandList = Array<CCommand> // FIXME: use linked list
+    typealias ListCommandsFilter = (cmd: CCommand) -> Bool
     
     private static var m_commandsLookup: CommandLookup = CommandLookup() // FIXME: rename
     private static var m_commands: CommandList = CommandList() // FIXME: rename
     
     // MARK: Command registry
     
-    static func Register(cmd: CCommand) -> Bool
+    static func Register(cmd: CCommand) -> Bool // FIXME: rename
     {
         if cmd.Name.hasPrefix("@")
         {
@@ -34,6 +35,84 @@ final class CRegistry: NSObject
         }
         
         return AddCommand(cmd)
+    }
+    
+    static func Unregister(#command: CCommand) -> Bool  // FIXME: rename
+    {
+        return RemoveCommand(command)
+    }
+    
+    static func Unregister(#filter: ListCommandsFilter) -> Bool
+    {
+        var unregistered = false
+    
+        for var index: Int = m_commands.count - 1; index >= 0; --index
+        {
+            let cmd = m_commands[index]
+            if filter(cmd: cmd)
+            {
+                unregistered = Unregister(command: cmd) || unregistered
+            }
+        }
+        
+        return unregistered
+    }
+    
+    static func Clear()
+    {
+        m_commands.removeAll(keepCapacity: false)
+        m_commandsLookup.removeAll(keepCapacity: false)
+    }
+    
+    static func ListCommands(prefix: String? = nil, options: CommandListOptions = CommandListOptions.None) -> Array<CCommand>
+    {
+        return ListCommands(Array<CCommand>(), prefix, options)
+    }
+    
+    static func ListCommands(outList: Array<CCommand>, prefix: String? = nil, options: CommandListOptions = CommandListOptions.None) -> Array<CCommand>
+    {
+        return ListCommands(outList, delegate(CCommand cmd)
+        {
+            return ShouldListCommand(cmd, prefix, options);
+        });
+    }
+    
+    static func ListCommands(#filter: ListCommandsFilter) -> Array<CCommand>
+    {
+        return ListCommands(ReusableLists.NextAutoRecycleList<CCommand>(), filter);
+    }
+    
+    static func ListCommands(intout # outList: Array<CCommand>, # filter: ListCommandsFilter) -> Array<CCommand>
+    {
+        for command: CCommand in m_commands
+        {
+            if filter(command)
+            {
+                outList.append(command)
+            }
+        }
+        
+        return outList
+    }
+    
+    static func ShouldListCommand(command: CCommand, prefix: String, options: CommandListOptions = CommandListOptions.None) -> Bool
+    {
+        if command.IsDebug && (options & CommandListOptions.Debug) == 0
+        {
+            return false
+        }
+    
+        if command.IsSystem && (options & CommandListOptions.System) == 0
+        {
+            return false
+        }
+    
+        if command.IsHidden && (options & CommandListOptions.Hidden) == 0
+        {
+            return false
+        }
+    
+        return prefix == nil || StringUtils.StartsWithIgnoreCase(command.Name, prefix);
     }
 
     private static func AddCommand(cmd: CCommand) -> Bool

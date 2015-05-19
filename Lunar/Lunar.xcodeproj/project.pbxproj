@@ -12,6 +12,10 @@
 		8402CD951B0AF43E00115AA0 /* CRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402CD941B0AF43E00115AA0 /* CRegistry.swift */; };
 		8402CD971B0AF4C700115AA0 /* CCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402CD961B0AF4C700115AA0 /* CCommand.swift */; };
 		8402CD991B0AF89300115AA0 /* CommandListOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402CD981B0AF89300115AA0 /* CommandListOptions.swift */; };
+		8402CD9D1B0B04B600115AA0 /* CRegistryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402CD9C1B0B04B600115AA0 /* CRegistryTest.swift */; };
+		8402CD9E1B0B06CA00115AA0 /* CRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402CD941B0AF43E00115AA0 /* CRegistry.swift */; };
+		8402CD9F1B0B06CD00115AA0 /* CCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402CD961B0AF4C700115AA0 /* CCommand.swift */; };
+		8402CDA01B0B06D000115AA0 /* CommandListOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402CD981B0AF89300115AA0 /* CommandListOptions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +48,7 @@
 		8402CD941B0AF43E00115AA0 /* CRegistry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CRegistry.swift; sourceTree = SOURCE_ROOT; };
 		8402CD961B0AF4C700115AA0 /* CCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CCommand.swift; sourceTree = SOURCE_ROOT; };
 		8402CD981B0AF89300115AA0 /* CommandListOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommandListOptions.swift; sourceTree = SOURCE_ROOT; };
+		8402CD9C1B0B04B600115AA0 /* CRegistryTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CRegistryTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +103,7 @@
 			children = (
 				8402CD881B0AF3BC00115AA0 /* Supporting Files */,
 				8402CD921B0AF40600115AA0 /* CCommandTest.swift */,
+				8402CD9C1B0B04B600115AA0 /* CRegistryTest.swift */,
 			);
 			path = LunarTests;
 			sourceTree = "<group>";
@@ -208,7 +214,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8402CD9D1B0B04B600115AA0 /* CRegistryTest.swift in Sources */,
 				8402CD931B0AF40600115AA0 /* CCommandTest.swift in Sources */,
+				8402CD9E1B0B06CA00115AA0 /* CRegistry.swift in Sources */,
+				8402CDA01B0B06D000115AA0 /* CommandListOptions.swift in Sources */,
+				8402CD9F1B0B06CD00115AA0 /* CCommand.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
