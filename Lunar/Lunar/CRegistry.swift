@@ -8,48 +8,40 @@
 
 import UIKit
 
-enum CommandListOptions: Int
-{
-    case None   = 0
-    case Debug  = 1
-    case Hidden = 2
-    case System = 4
-}
-
 final class CRegistry: NSObject
 {
     typealias CommandLookup = Dictionary<String, CCommand>
     typealias CommandList = Array<CCommand> // FIXME: use linked list
-    typealias ListCommandsFilter = (cmd: CCommand) -> Bool
+    typealias ListCommandsFilter = (command: CCommand) -> Bool
     
     private static var m_commandsLookup: CommandLookup = CommandLookup() // FIXME: rename
     private static var m_commands: CommandList = CommandList() // FIXME: rename
     
     // MARK: Command registry
     
-    static func Register(cmd: CCommand) -> Bool // FIXME: rename
+    static func Register(#command: CCommand) -> Bool // FIXME: rename
     {
-        if cmd.Name.hasPrefix("@")
+        if command.Name.hasPrefix("@")
         {
-            cmd.Flags |= CCommandFlags.Hidden
+            command.Flags |= CCommandFlags.Hidden
         }
         
-        return AddCommand(cmd)
+        return AddCommand(command: command)
     }
     
     static func Unregister(#command: CCommand) -> Bool  // FIXME: rename
     {
-        return RemoveCommand(command)
+        return RemoveCommand(command: command)
     }
     
-    static func Unregister(#filter: ListCommandsFilter) -> Bool
+    static func Unregister(#filter: ListCommandsFilter) -> Bool // FIXME: rename
     {
         var unregistered = false
     
         for var index: Int = m_commands.count - 1; index >= 0; --index
         {
             let cmd = m_commands[index]
-            if filter(cmd: cmd)
+            if filter(command: cmd)
             {
                 unregistered = Unregister(command: cmd) || unregistered
             }
@@ -66,36 +58,27 @@ final class CRegistry: NSObject
     
     static func ListCommands(prefix: String? = nil, options: CommandListOptions = CommandListOptions.None) -> Array<CCommand>
     {
-        return ListCommands(Array<CCommand>(), prefix, options)
-    }
-    
-    static func ListCommands(outList: Array<CCommand>, prefix: String? = nil, options: CommandListOptions = CommandListOptions.None) -> Array<CCommand>
-    {
-        return ListCommands(outList, delegate(CCommand cmd)
-        {
-            return ShouldListCommand(cmd, prefix, options);
+        return ListCommands(filter: {
+            return self.ShouldListCommand(command: $0, prefix: prefix, options: options);
         });
     }
     
     static func ListCommands(#filter: ListCommandsFilter) -> Array<CCommand>
     {
-        return ListCommands(ReusableLists.NextAutoRecycleList<CCommand>(), filter);
-    }
-    
-    static func ListCommands(intout # outList: Array<CCommand>, # filter: ListCommandsFilter) -> Array<CCommand>
-    {
+        var result = Array<CCommand>()
+        
         for command: CCommand in m_commands
         {
-            if filter(command)
+            if filter(command: command)
             {
-                outList.append(command)
+                result.append(command)
             }
         }
         
-        return outList
+        return result
     }
     
-    static func ShouldListCommand(command: CCommand, prefix: String, options: CommandListOptions = CommandListOptions.None) -> Bool
+    static func ShouldListCommand(#command: CCommand, prefix: String?, options: CommandListOptions = CommandListOptions.None) -> Bool
     {
         if command.IsDebug && (options & CommandListOptions.Debug) == 0
         {
@@ -112,16 +95,18 @@ final class CRegistry: NSObject
             return false
         }
     
-        return prefix == nil || StringUtils.StartsWithIgnoreCase(command.Name, prefix);
+        // return prefix == nil || StringUtils.StartsWithIgnoreCase(command.Name, prefix); // FIXME!
+        
+        return true
     }
 
-    private static func AddCommand(cmd: CCommand) -> Bool
+    private static func AddCommand(#command: CCommand) -> Bool // FIXME: rename
     {
-        let name = cmd.Name
+        let name = command.Name
         for var index: Int = 0; index < m_commands.count; ++index
         {
             let otherCmd = m_commands[index]
-            if cmd == otherCmd
+            if command == otherCmd
             {
                 return false // no duplicates
             }
@@ -129,26 +114,26 @@ final class CRegistry: NSObject
             let otherName = otherCmd.Name
             if name < otherName
             {
-                m_commands.insert(cmd, atIndex: index)
-                m_commandsLookup[cmd.Name] = cmd
+                m_commands.insert(command, atIndex: index)
+                m_commandsLookup[command.Name] = command
                 return true
             }
 
             if name == otherName
             {
-                m_commands[index] = cmd
-                m_commandsLookup[cmd.Name] = cmd
+                m_commands[index] = command
+                m_commandsLookup[command.Name] = command
                 return true
             }
         }
 
-        m_commands.append(cmd);
-        m_commandsLookup[cmd.Name] = cmd;
+        m_commands.append(command);
+        m_commandsLookup[command.Name] = command;
 
         return true;
     }
 
-    private static func RemoveCommand(command: CCommand) -> Bool
+    private static func RemoveCommand(#command: CCommand) -> Bool // FIXME: rename
     {
         if let index = find(m_commands, command)
         {
